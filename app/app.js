@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
 dotenv.config();
+import path from 'path';
 import express from 'express';
 import dbConnect from '../config/dbConnect.js';
 import userRoutes from '../routes/usersRoute.js';
@@ -76,6 +77,14 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 // pass incoming data
 app.use(express.json());
 // This middleware parses the incoming request body and makes the parsed JSON data available in req.body of the subsequent middleware functions or route handlers. 
+// url encoded
+app.use(express.urlencoded({ extended: true }));
+// serve static files
+app.use(express.static("public"));
+// home route
+app.get("/", (req, res) => {
+  res.sendFile(path.join("public", "index.html"));
+});
 app.use('/api/v1/users/', userRoutes);
 app.use('/api/v1/products/', productsRouter);
 app.use('/api/v1/categories/', categoriesRouter);
